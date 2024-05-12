@@ -1,0 +1,50 @@
+#!/bin/bash
+
+PACMAN_INSTALLS=(
+	base-devel
+	git
+	clang
+)
+
+YAY_INSTALLS=(
+	hyprland
+	firefox
+	zsh
+	waybar
+	swaylock
+	swayidle
+	waycopy
+	ttf-fira-code
+	nerd-fira-code
+	powerline-fonts
+	nodejs
+)
+
+# Prepare installation by installing basic programs via pacman
+sudo pacman -Sy ${PACMAN_INSTALLS[@]}
+
+HOME_DIR=/home/robert
+PKG_BUILD_DIR=${HOME_DIR}/.repos
+mkdir -p ${PKG_BUILD_DIR}
+
+# Install yay
+git clone https://aur.archlinux.org/yay.git ${PKG_BUILD_DIR}/yay
+cd ${PKG_BUILD_DIR}/yay
+makepkg -si
+
+yay -Y --gendb
+yay -Syu --devel
+yay -Y --devel --save
+
+# Install yay packages
+yay -S ${YAY_INSTALLS[@]}
+
+# Generate ssh-key for github
+echo "Generating shh key"
+ssh-keygen -t rsa -f /.ssh/id_rsa -N ""
+
+Hyprland &
+HYPRLAND_PID=$!
+
+firefox
+
